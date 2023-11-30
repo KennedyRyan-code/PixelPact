@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PixelPact Image Compression</title>
+</head>
+<body>
+    <h1>PixelPact Image Compression</h1>
+
+    <h2>Compress Image</h2>
+    <input type="file" id="compressInput" accept="image/*">
+    <button onclick="compressImage()">Compress</button>
+    <br><br>
+    <div id="compressResult"></div>
+
+    <hr>
+
+    <h2>Decompress Image</h2>
+    <input type="file" id="decompressInput" accept="image/*">
+    <button onclick="decompressImage()">Decompress</button>
+    <br><br>
+    <div id="decompressResult"></div>
+
+    <script>
+        function compressImage() {
+            const fileInput = document.getElementById('compressInput');
+            const file = fileInput.files[0];
+            
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/api/compress', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                document.getElementById('compressResult').innerHTML = `<a href="${url}" download="comp_image.jpg">Download Compressed Image</a>`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function decompressImage() {
+            const fileInput = document.getElementById('decompressInput');
+            const file = fileInput.files[0];
+            
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/api/decompress', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                document.getElementById('decompressResult').innerHTML = `<a href="${url}" download="decomp_image.jpg">Download Decompressed Image</a>`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
