@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from flask import Flask, request, send_file
-from app.compression import compress, decompress
 
 app = Flask(__name__)
 
@@ -11,9 +10,14 @@ def compress_image():
         return 'No file part'
 
     file = request.files['file']
-    output_path = '/app/images/compressed_imgs/comp_image.jpg'  # output path
-    compress.compress_image(file, output_path)
-    return send_file(output_path, as_attachment=True)
+    output_path = 'app/images/compressed_imgs/comp_image.jpg'  # output path
+    success, message = compress.compress_image(file, output_path)
+
+    if success:
+        return send_file(output_path, as_attachment=True)
+
+    else:
+        return f'Compression failed: {message}'
 
 @app.route('/api/decompress', methods=['POST'])
 def decompress_image():
@@ -21,10 +25,18 @@ def decompress_image():
         return 'No file part'
 
     file = request.files['file']
-    output_path = '/app/images/decompressed_imgs/decomp_image.jpg'  #  output path
-    decompress.decompress_image(file, output_path)
-    return send_file(output_path, as_attachment=True)
+    output_path = 'app/images/decompressed_imgs/decomp_image.jpg'  #  output path
+    success, message = decompress.decompress_image(file, output_path)
+
+    if success:
+        return send_file(output_path, as_attachment=True)
+
+    else:
+        return f'Decompression failed: {message}'
 
 @app.route('/')
 def index():
-    return app.send_static_file('/static/index.html')
+    return app.send_static_file('index.html')
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
