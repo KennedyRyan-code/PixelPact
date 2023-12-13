@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-
 from flask import Flask, request, send_file
+from compression import compress, decompress
 
 app = Flask(__name__)
 
